@@ -32,47 +32,16 @@ export interface WindowLocationEvent extends Event {
 }
 
 export function isWindowLocationEvent(data: any): data is WindowLocationEvent {
-    const isValidEvent: boolean = isEvent(data) && data.type === windowLocationEventType
-    if (!isValidEvent) {
-        return false
-    }
-
+    const validEvent: boolean = isEvent(data) && data.type === windowLocationEventType
     const validProtocol: boolean = 'protocol' in data && typeof data.protocol === 'string'
-    if (!validProtocol) {
-        return false
-    }
-
     const validHostname: boolean = 'hostname' in data && typeof data.hostname === 'string'
-    if (!validHostname) {
-        return false
-    }
-
     const validPort: boolean = 'port' in data && typeof data.port === 'number' && data.port >= 0 && data.port <= 65535
-    if (!validPort) {
-        return false
-    }
-
     const validPath: boolean = 'path' in data && typeof data.path === 'string'
-    if (!validPath) {
-        return false
-    }
-
     const validSearch: boolean = 'search' in data && typeof data.search === 'string'
-    if (!validSearch) {
-        return false
-    }
-
     const validHash: boolean = 'hash' in data && typeof data.hash === 'string'
-    if (!validHash) {
-        return false
-    }
-
     const validWindowReference: boolean = 'windowReference' in data && typeof data.windowReference === 'number' && isEventTime(data.windowReference)
-    if (!validWindowReference) {
-        return false
-    }
 
-    return true
+    return validEvent && validProtocol && validHostname && validPort && validPath && validSearch && validHash && validWindowReference
 }
 
 export function normalizeWindowLocationEvent(event: WindowLocationEvent): WindowLocationEvent {
@@ -90,21 +59,23 @@ export function normalizeWindowLocationEvent(event: WindowLocationEvent): Window
 }
 
 
-export function createWindowLocationEvent(windowReference: number): WindowLocationEvent {
+export function createWindowLocationEvent(windowReference: number, windowLocationSupplier: () => Location): WindowLocationEvent {
 
-    const protocol: string = window.location.protocol.replace(/:$/, '') // trim the tailing colon from this api call
-    const hostname: string = window.location.hostname
+    const location: Location = windowLocationSupplier()
+
+    const protocol: string = location.protocol.replace(/:$/, '') // trim the tailing colon from this api call
+    const hostname: string = location.hostname
 
     var port: number = 0
-    var parsedPort: number = parseInt(window.location.port)
+    var parsedPort: number = parseInt(location.port)
     if (!isNaN(parsedPort)) {
         // use the explicitly set port if there is one
         port = parsedPort
     }
 
-    const path: string = window.location.pathname
-    const search: string = window.location.search
-    const hash: string = window.location.hash
+    const path: string = location.pathname
+    const search: string = location.search
+    const hash: string = location.hash
 
     return {
         type: windowLocationEventType,

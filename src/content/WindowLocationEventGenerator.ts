@@ -39,7 +39,7 @@ export class WindowLocationEventGenerator {
 
         if (currentLocation !== this.lastLocation) {
             this.lastLocation = currentLocation
-            this.eventComsumer(createWindowLocationEvent(this.windowReference))
+            this.eventComsumer(createWindowLocationEvent(this.windowReference, () => window.location))
         }
 
         window.setTimeout(() => this.onTimer(), 250)

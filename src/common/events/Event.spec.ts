@@ -42,7 +42,7 @@ suite('Event', () => {
         assert.isFalse(isEventTime(negative), "Negative event time identified as valid")
     })
 
-    test('Event verification works in both directions', () => {
+    test('Event verification', () => {
         const event1: Event = {
             type: "Window",
             time: 264362

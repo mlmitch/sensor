@@ -25,16 +25,9 @@ export interface Event {
 
 export function isEvent(data: any): data is Event {
     const validType: boolean = 'type' in data && typeof data.type === 'string'
-    if (!validType) {
-        return false
-    }
-
     const validTime: boolean = 'time' in data && typeof data.time === 'number' && isEventTime(data.time)
-    if (!validTime) {
-        return false
-    }
 
-    return true
+    return validType && validTime
 }
 
 export function isEventTime(num: number): boolean {
